@@ -1,0 +1,36 @@
+* Google API
+	- Authorizing: OAuth 2.0 ( same as OneDrive )
+	- Files & Folders:
+		All content in Drive is represented as a File. Files are comprised of metadata and content and can be inserted, updated, copied, and deleted.
+	- Permissions:
+		Access to files & folders is determined by an access control list (ACL). An ACL is a list of permissions that determine whether or not users can perform actions on a file such as read or write.
+	- Manage Files & Folders:
+		1. Upload 
+			The Drive API allows you to upload file data when create or updating a File resource.
+			You can send upload requests in any of the following ways:
+				1) Simple upload: uploadType=media. For quick transfer of a small file (5 MB or less). To perform a simple upload, refer to Performing a Simple Upload.
+				2) Multipart upload: uploadType=multipart. For quick transfer of a small file (5 MB or less) and metadata describing the file, all in a single request. To perform a multipart upload, refer to Performing a Multipart Upload.
+				3) Resumable upload: uploadType=resumable. For more reliable transfer, especially important with large files. Resumable uploads are a good choice for most applications, since they also work for small files at the cost of one additional HTTP request per upload. To perform a resumable upload, refer to Performing a Resumable Upload.
+		2. Search
+			You can search or filter files with the files.list method of the Drive API. These methods accept the q parameter which is a search query combining one or more search clauses. Each search clause is made up of three parts.
+			1) Field
+				Attribute of the file that is searched, e.g., the attribute name of the file.
+			2) Operator
+				Test that is performed on the data to provide a match, e.g., contains.
+			3) Value
+				The content of the attribute that is tested, e.g. the name of the file My cool document.
+			Combine clauses with the conjunctions and or or, and negate the query with not.
+		3. Download
+			The Drive API allows you to download files that are stored in Google Drive. Also, you can download exported versions of Google Documents (Documents, Spreadsheets, Presentations, etc.) in formats that your app can handle. Drive also supports providing users direct access to a file via the URL in the webViewLink property.
+			Depending on the type of download you'd like to perform — a file, a Google Document, or a content link — you'll use one of the following URLs:
+			1) Download a file — files.get with alt=media file resource
+			2) Download and export a Google Doc — files.export
+			3) Link a user to a file — webContentLink from the file resource
+		4. Custom File Properties
+			You can use Drive API to add your own properties to a Drive file. These properties are stored as key/value pairs on the Drive file. Properties may be visible to all apps, or restricted to the app that creates the property.
+			Properties are accessed using the properties (visible to all apps) and appProperties (restricted to single apps) fields on files
+			Properties can also be used in search expressions.
+			Using properties will allow your app to store additional metadata on a file, such as tags, IDs from other data stores, viewing preferences etc. Properties can be used to share metadata between applications, for example, in a workflow application.
+
+*Some thoughts:
+	- use SQL to store client information ( not necessary )

@@ -1,0 +1,120 @@
+2.1 已有网盘补充
+    * Onedrive
+        开放API：https://dev.onedrive.com/README.htm
+
+* 关于授权方式（OAuth）/ Onedrive如此授权
+    From: https://en.wikipedia.org/wiki/OAuth
+        OAuth is an open standard for authorization, commonly used as a way for Internet users to authorize websites or applications to access their information on other websites but without giving them the passwords.[1] This mechanism is used by companies such as Google, Facebook, Microsoft and Twitter to permit the users to share information about their accounts with third party applications or websites.
+        Generally, OAuth provides to clients a "secure delegated access" to server resources on behalf of a resource owner. It specifies a process for resource owners to authorize third-party access to their server resources without sharing their credentials. Designed specifically to work with Hypertext Transfer Protocol (HTTP), OAuth essentially allows access tokens to be issued to third-party clients by an authorization server, with the approval of the resource owner. The third party then uses the access token to access the protected resources hosted by the resource server.[2]
+        OAuth is a service that is complementary to and distinct from OpenID. OAuth is also distinct from OATH, which is a reference architecture for authentication, not a standard for authorization. However, OAuth is directly related to OpenID Connect (OIDC) since OIDC is an authentication layer built on top of OAuth 2.0. OAuth is also distinct from XACML, which is an authorization policy standard. OAuth can be used in conjunction with XACML where OAuth is used for ownership consent and access delegation whereas XACML is used to define the authorization policies (e.g. managers can view documents in their region).     
+    OAuth的作用就是让"客户端"安全可控地获取"用户"的授权，与"服务提供商"进行互动。
+
+* Design Level
+    基于云储存的同步与加密：
+        -前端：web前端/客户端
+        -服务实现方式：API
+        -储存方式
+        -加密方法：AES
+        -传输层
+
+* 展开建议
+    可以参考Google Drive/Onedrive 官方文档（链接已经给出），对API使用的可行性进行展开描述
+
+* 加密方式AES：
+    AES-CBC:
+        密码分组链接模式（Cipher Block Chaining (CBC)）
+        这种模式是先将明文切分成若干小段，然后每一小段与初始块或者上一段的密文段进行异或运算后，再与密钥进行加密。
+        原理图片：http://www.cnblogs.com/starwolf/p/3365834.html
+    实现：
+        Crypto库提供AES:
+            示例代码：
+                #!/usr/bin/env python
+                # -*- coding: utf-8 -*-
+                from Crypto.Cipher import AES
+                import base64
+                PADDING = '\0'
+                #PADDING = ' '
+                pad_it = lambda s: s+(16 - len(s)%16)*PADDING  
+                key = '1234567812345678'
+                iv = '1234567812345678'
+                source = 'Test String'
+                generator = AES.new(key, AES.MODE_CBC, iv)
+                crypt = generator.encrypt(pad_it(source))   
+                cryptedStr = base64.b64encode(crypt)
+                print cryptedStr
+                generator = AES.new(key, AES.MODE_CBC, iv)
+                recovery = generator.decrypt(crypt)
+                print recovery.rstrip(PADDING)
+        c#也在库中直接提供AES算法，c#对写图形界面程序也比较友好，不过写起来比较长：
+            示例代码：
+
+                using System;
+                using System.Collections.Generic;
+                using System.Linq;
+                using System.Text;
+                using System.Security.Cryptography;
+
+                namespace test
+                {
+                    class Class1
+                    {
+                        static void Main(string[] args)
+                        {
+                            Console.WriteLine("I am comming");
+                            String source = "Test String";
+                            String encryptData = Class1.Encrypt(source, "1234567812345678", "1234567812345678");
+                            Console.WriteLine("=1==");
+                            Console.WriteLine(encryptData);
+                            Console.WriteLine("=2==");
+                            String decryptData = Class1.Decrypt("2fbwW9+8vPId2/foafZq6Q==", "1234567812345678", "1234567812345678");
+                            Console.WriteLine(decryptData);
+                        
+                            Console.WriteLine("=3==");
+                        
+                            Console.WriteLine("I will go out");
+                        }
+                    
+                        public static string Encrypt(string toEncrypt, string key, string iv)
+                        {
+                            byte[] keyArray = UTF8Encoding.UTF8.GetBytes(key);
+                            byte[] ivArray = UTF8Encoding.UTF8.GetBytes(iv);
+                            byte[] toEncryptArray = UTF8Encoding.UTF8.GetBytes(toEncrypt);
+                            RijndaelManaged rDel = new RijndaelManaged();
+                            rDel.Key = keyArray;
+                            rDel.IV = ivArray;
+                            rDel.Mode = CipherMode.CBC;
+                            rDel.Padding = PaddingMode.Zeros;
+                            ICryptoTransform cTransform = rDel.CreateEncryptor();
+                            byte[] resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
+                            return Convert.ToBase64String(resultArray, 0, resultArray.Length);
+                        }
+                    
+                        public static string Decrypt(string toDecrypt, string key, string iv)
+                        {
+                            byte[] keyArray = UTF8Encoding.UTF8.GetBytes(key);
+                            byte[] ivArray = UTF8Encoding.UTF8.GetBytes(iv);
+                            byte[] toEncryptArray = Convert.FromBase64String(toDecrypt);
+                            RijndaelManaged rDel = new RijndaelManaged();
+                            rDel.Key = keyArray;
+                            rDel.IV = ivArray;
+                            rDel.Mode = CipherMode.CBC;
+                            rDel.Padding = PaddingMode.Zeros;
+                            ICryptoTransform cTransform = rDel.CreateDecryptor();
+                            byte[] resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
+                            return UTF8Encoding.UTF8.GetString(resultArray);
+                        }
+                    }
+                }
+
+
+
+
+
+* 图形化客户端可用工具：
+    .net(c#), QT(C++,python), GTK， Electron(JavaScript)
+
+* Web 客户端：
+    HTML， JavaScript, Canvas啥的
+
+* 分块储存：
+    文件按块分割(当作二进制数据流)，分别加密上传，考虑冗余以增加可靠性
