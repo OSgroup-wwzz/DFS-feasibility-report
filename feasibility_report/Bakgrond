@@ -1,0 +1,43 @@
+背景
+
+×分布式存储
+
+进入21世纪后，世界上的总信息量仍在经历爆发性的增长。据估计，2005年，世界上总共有约130EB的信息，而到了2010年，这个数字增加到了1,227EB，增长了约10倍【1】，这也证明大数据时代的到来。然而比起数据的增长，存储媒介的进步虽然很快，但难以直接满足快速增长的信息，以及其带来的各种需求，如当一个存储出现错误或遭到外来入侵的时候，怎样做能够使损失降到最低。在这种情况下，分布式存储应运而生，将要存储信息分散在不同的位置，通过网络连接互相传输，使整个存储系统的健壮性和安全性能够得到保证。
+
+1984年，Sun公司首先开发了网络文件系统NFS【2】。
+
+××MapReduce
+
+    MapReduce是Google提出的一个软件架构，用于大规模数据集的并行运算。
+
+    如名字所提示的，MapReduce主要分为Map和Reduce两部分，指定一个Map函数，用来把一组键值对映射成一组新的键值对，指定并发的Reduce函数，用来合并所有键值相等的元素，通过这种方式使得并行处理变得透明。
+
+    现在如Apache的Hadoop分布式文件系统(HDFS)，Google的Google文件系统(GFS)都曾采用MapReduce。
+
+    MapReduce通过把对数据集的大规模操作分发给网络上的每个节点实现可靠性；每个节点会周期性的把完成的工作和状态的更新报告回来。如果一个节点保持沉默超过一个预设的时间间隔，主节点（类同Google档案系统中的主服务器）记录下这个节点状态为死亡，并把分配给这个节点的数据发到别的节点。每个操作使用命名文件的不可分割操作以确保不会发生并行线程间的冲突；当文件被改名的时候，系统可能会把他们复制到任务名以外的另一个名字上去。（避免副作用）【4】。
+
+
+加密存储
+
+    毋庸置疑，随着网上数据量的增加，信息的保密与安全的问题也受到日益的重视。
+
+    中心化的加密存储面临一个困境，即整个存储系统的安全与否都取决于中心服务器的安全。一旦中心服务器遭到攻击，所有的数据都面临泄露或被篡改的危险。而如果中心服务器出现错误或者宕机，所有数据都将变得无法访问。
+
+    因此，采取与分布式存储相近的哲学，可以使用一种去中心化的加密存储，来保证在系统的一部分失败时仍能提供可靠安全的服务。
+
+    中本聪提出并实现的BitCoin，采用点对点网络的区块链【3】，从算法上保证了比特币的安全和交易的可信性。
+
+**区块链
+
+    区块链（blockchain）是用分布式数据库识别、传播和记载信息的智能化对等网络, 起源自比特币。区块链是一串使用密码学方法相关联产生的数据块，在比特币系统中，每一个数据块中包含了若干次比特币网络交易的信息，用于验证其信息的有效性（防伪）和生成下一个区块。
+
+    区块链在除去Storj（发音Storage）是采用区块链存储元数据的点对点存储，P2P能够在增大访问带宽的同时，降低集中管理的人事费用等，从而使存储价格降至同类网盘的几分之一【5】。
+
+
+
+
+【1】Gantz J, Reinsel D. The digital universe in 2020: Big data, bigger digital shadows, and biggest growth in the far east[J]. IDC iView: IDC Analyze the future, 2012, 2007(2012): 1-16.
+【2】Russel Sandberg; David Goldberg; Steve Kleiman; Dan Walsh; Bob Lyon (1985). "Design and Implementation of the Sun Network Filesystem". USENIX.
+【3】http://www.newyorker.com/tech/elements/the-mission-to-decentralize-the-internet. Joshua Kopstein (12 December 2013). "The Mission to Decentralize the Internet", The New Yorker.
+【4】https://zh.wikipedia.org/wiki/MapReduce. Retrieved on Mar 17,2017
+【5】http://www.8btc.com/storj-vs-dropbox-why-decentralized-storage-is-the-future. Storj VS. Dropbox：为什么去中心化存储是未来 | 巴比特. Retrieved on Mar 17,2017
